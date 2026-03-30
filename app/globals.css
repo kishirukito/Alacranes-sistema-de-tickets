@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Alacranes Official Color Palette */
+:root {
+  /* Verde Bosque #004D40 → dark teal green */
+  --background: #F5F5F5;
+  --foreground: #212121;
+  --card: #FFFFFF;
+  --card-foreground: #212121;
+  --popover: #FFFFFF;
+  --popover-foreground: #212121;
+  /* Verde Esmeralda #00C853 as primary */
+  --primary: #00C853;
+  --primary-foreground: #FFFFFF;
+  /* Gris Humo lighter section backgrounds */
+  --secondary: #F5F5F5;
+  --secondary-foreground: #212121;
+  --muted: #E8E8E8;
+  --muted-foreground: #6B6B6B;
+  /* Verde Bosque as accent */
+  --accent: #004D40;
+  --accent-foreground: #FFFFFF;
+  --destructive: #D32F2F;
+  --destructive-foreground: #FFFFFF;
+  --border: #E0E0E0;
+  --input: #E0E0E0;
+  --ring: #00C853;
+  --chart-1: #00C853;
+  --chart-2: #004D40;
+  --chart-3: #00897B;
+  --chart-4: #4CAF50;
+  --chart-5: #81C784;
+  --radius: 0.75rem;
+  --sidebar: #004D40;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #00C853;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #00695C;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #00695C;
+  --sidebar-ring: #00C853;
+  /* Custom tokens for Alacranes */
+  --forest: #004D40;
+  --forest-light: #00695C;
+  --emerald: #00C853;
+  --emerald-dark: #009624;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), 'Inter', sans-serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-forest: var(--forest);
+  --color-forest-light: var(--forest-light);
+  --color-emerald: var(--emerald);
+  --color-emerald-dark: var(--emerald-dark);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
