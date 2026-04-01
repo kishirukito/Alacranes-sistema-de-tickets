@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { Loader2 } from "lucide-react"
@@ -50,7 +50,7 @@ function mapToZoneId(zoneKey: string): ZoneId {
   return "lateral-oeste"
 }
 
-export default function AsientosPage() {
+function AsientosContent() {
   const searchParams = useSearchParams()
   const matchId = searchParams.get("match") ?? ""
 
@@ -201,5 +201,17 @@ export default function AsientosPage() {
 
       <SiteFooter />
     </div>
+  )
+}
+
+export default function AsientosPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-card">
+        <Loader2 className="size-8 animate-spin text-emerald" />
+      </div>
+    }>
+      <AsientosContent />
+    </Suspense>
   )
 }
