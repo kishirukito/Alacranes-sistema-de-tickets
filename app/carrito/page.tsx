@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -10,7 +10,8 @@ import { CartItem, CartItemData } from "@/components/cart-item"
 import { OrderSummary } from "@/components/order-summary"
 import { SiteFooter } from "@/components/site-footer"
 
-export default function CarritoPage() {
+// ─── Componente interno que usa useSearchParams ───────────────────────────────
+function CarritoContent() {
   const [items, setItems] = useState<CartItemData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [paypalStatus, setPaypalStatus] = useState<"idle" | "capturing" | "success" | "cancel" | "error">("idle")
@@ -52,13 +53,11 @@ export default function CarritoPage() {
     if (paypal === "cancel") {
       setPaypalStatus("cancel")
       setPaypalMessage("Cancelaste el pago. Tu carrito sigue intacto.")
-      // Limpiar params de la URL
       router.replace("/carrito")
       return
     }
 
     if (paypal === "success" && token && payerId) {
-      // Necesitamos el orderId interno — lo guardamos en sessionStorage al crear la orden
       const savedOrderId = orderId || sessionStorage.getItem("alacranes_order_id")
       if (!savedOrderId) {
         setPaypalStatus("error")
@@ -110,7 +109,6 @@ export default function CarritoPage() {
       )
     }
 
-    // Sync with API
     try {
       await fetch("/api/cart", {
         method: "PUT",
@@ -125,7 +123,6 @@ export default function CarritoPage() {
   const handleRemove = useCallback(async (id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id))
 
-    // Sync with API
     try {
       await fetch(`/api/cart?id=${id}`, { method: "DELETE" })
     } catch (error) {
@@ -150,6 +147,93 @@ export default function CarritoPage() {
     }
   }, [subtotal])
 
+  return (
+    <main className="relative z-20 mx-auto max-w-6xl px-4 pb-10 lg:px-6">
+
+      {/* Banner de estado PayPal */}
+      {paypalStatus === "capturing" && (
+        <div className="mb-6 flex items-center gap-3 rounded-xl border border-emerald/30 bg-emerald/10 px-5 py-4 text-sm text-emerald">
+          <Loader2 className="size-5 animate-spin shrink-0" />
+          <span className="font-semibold">Procesando tu pago con PayPal, por favor espera...</span>
+        </div>
+      )}
+      {paypalStatus === "success" && (
+        <div className="mb-6 flex items-center gap-3 rounded-xl border border-emerald/30 bg-emerald/10 px-5 py-4 text-sm text-emerald">
+          <CheckCircle2 className="size-5 shrink-0" />
+          <div>
+            <p className="font-bold">¡Pago completado!</p>
+            <p className="text-xs opacity-80">{paypalMessage}</p>
+          </div>
+          <Link href="/mis-boletos" className="ml-auto shrink-0 rounded-lg bg-emerald px-3 py-1.5 text-xs font-bold text-card hover:bg-emerald-dark transition-colors">
+            Ver Boletos
+          </Link>
+        </div>
+      )}
+      {(paypalStatus === "cancel" || paypalStatus === "error") && (
+        <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-400">
+          <XCircle className="size-5 shrink-0" />
+          <span>{paypalMessage}</span>
+        </div>
+      )}
+
+      {/* Pull content up to overlap hero */}
+      <div className="-mt-6 flex flex-col gap-6 lg:flex-row lg:gap-8">
+        {/* Left: Cart items */}
+        <div className="flex-1 space-y-4">
+          {isLoading ? (
+            <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <p className="text-muted-foreground">Cargando carrito...</p>
+            </div>
+          ) : items.length === 0 ? (
+            <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <p className="mb-4 text-muted-foreground">Tu carrito esta vacio</p>
+              <Link
+                href="/asientos"
+                className="inline-flex items-center gap-2 rounded-lg bg-emerald px-4 py-2 text-sm font-semibold text-card transition-colors hover:bg-emerald-dark"
+              >
+                Agregar Boletos
+              </Link>
+            </div>
+          ) : (
+            items.map((item) => (
+              <CartItem
+                key={item.id}
+                item={item}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemove={handleRemove}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Right: Order summary */}
+        <div className="w-full lg:w-[360px]">
+          <div className="sticky top-8">
+            <OrderSummary
+              subtotal={subtotal}
+              serviceFee={serviceFee}
+              itemCount={itemCount}
+              onApplyDiscount={handleApplyDiscount}
+              disabled={paypalStatus === "capturing" || paypalStatus === "success"}
+            />
+
+            {/* Continue shopping link */}
+            <Link
+              href="/asientos"
+              className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-emerald transition-colors hover:text-forest"
+            >
+              <ArrowLeft className="size-4" />
+              Seguir comprando
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  )
+}
+
+// ─── Page principal con Suspense ──────────────────────────────────────────────
+export default function CarritoPage() {
   return (
     <div className="min-h-screen bg-card">
       {/* Transparent header */}
@@ -177,88 +261,16 @@ export default function CarritoPage() {
         </div>
       </section>
 
-      {/* Cart content */}
-      <main className="relative z-20 mx-auto max-w-6xl px-4 pb-10 lg:px-6">
-
-        {/* Banner de estado PayPal */}
-        {paypalStatus === "capturing" && (
-          <div className="mb-6 flex items-center gap-3 rounded-xl border border-emerald/30 bg-emerald/10 px-5 py-4 text-sm text-emerald">
-            <Loader2 className="size-5 animate-spin shrink-0" />
-            <span className="font-semibold">Procesando tu pago con PayPal, por favor espera...</span>
+      {/* Cart content wrapped in Suspense (required for useSearchParams) */}
+      <Suspense fallback={
+        <main className="relative z-20 mx-auto max-w-6xl px-4 pb-10 lg:px-6">
+          <div className="-mt-6 rounded-xl border border-border bg-card p-8 text-center">
+            <p className="text-muted-foreground">Cargando carrito...</p>
           </div>
-        )}
-        {paypalStatus === "success" && (
-          <div className="mb-6 flex items-center gap-3 rounded-xl border border-emerald/30 bg-emerald/10 px-5 py-4 text-sm text-emerald">
-            <CheckCircle2 className="size-5 shrink-0" />
-            <div>
-              <p className="font-bold">¡Pago completado!</p>
-              <p className="text-xs opacity-80">{paypalMessage}</p>
-            </div>
-            <Link href="/mis-boletos" className="ml-auto shrink-0 rounded-lg bg-emerald px-3 py-1.5 text-xs font-bold text-card hover:bg-emerald-dark transition-colors">
-              Ver Boletos
-            </Link>
-          </div>
-        )}
-        {(paypalStatus === "cancel" || paypalStatus === "error") && (
-          <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-400">
-            <XCircle className="size-5 shrink-0" />
-            <span>{paypalMessage}</span>
-          </div>
-        )}
-
-        {/* Pull content up to overlap hero */}
-        <div className="-mt-6 flex flex-col gap-6 lg:flex-row lg:gap-8">
-          {/* Left: Cart items */}
-          <div className="flex-1 space-y-4">
-            {isLoading ? (
-              <div className="rounded-xl border border-border bg-card p-8 text-center">
-                <p className="text-muted-foreground">Cargando carrito...</p>
-              </div>
-            ) : items.length === 0 ? (
-              <div className="rounded-xl border border-border bg-card p-8 text-center">
-                <p className="mb-4 text-muted-foreground">Tu carrito esta vacio</p>
-                <Link
-                  href="/asientos"
-                  className="inline-flex items-center gap-2 rounded-lg bg-emerald px-4 py-2 text-sm font-semibold text-card transition-colors hover:bg-emerald-dark"
-                >
-                  Agregar Boletos
-                </Link>
-              </div>
-            ) : (
-              items.map((item) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onRemove={handleRemove}
-                />
-              ))
-            )}
-          </div>
-
-          {/* Right: Order summary */}
-          <div className="w-full lg:w-[360px]">
-            <div className="sticky top-8">
-              <OrderSummary
-                subtotal={subtotal}
-                serviceFee={serviceFee}
-                itemCount={itemCount}
-                onApplyDiscount={handleApplyDiscount}
-                disabled={paypalStatus === "capturing" || paypalStatus === "success"}
-              />
-
-              {/* Continue shopping link */}
-              <Link
-                href="/asientos"
-                className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-emerald transition-colors hover:text-forest"
-              >
-                <ArrowLeft className="size-4" />
-                Seguir comprando
-              </Link>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
+      }>
+        <CarritoContent />
+      </Suspense>
 
       {/* Footer */}
       <SiteFooter />
