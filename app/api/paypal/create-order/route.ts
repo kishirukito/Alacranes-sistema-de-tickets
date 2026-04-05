@@ -105,12 +105,19 @@ export async function POST(request: NextRequest) {
         description: "Cargo de procesamiento (5%)",
       })
 
+      // Obtener URL base desde el request (funciona en cualquier dominio)
+      const origin = request.headers.get("origin") ||
+        request.headers.get("x-forwarded-host")
+          ? `https://${request.headers.get("x-forwarded-host")}`
+          : process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+
       // Crear orden en PayPal
       const { paypalOrderId, approveUrl } = await createPayPalOrder(
         paypalItems,
         total,
         "MXN",
-        order.id
+        order.id,
+        origin
       )
 
       // Guardar paypal_order_id en nuestra orden

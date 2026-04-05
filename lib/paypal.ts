@@ -71,7 +71,8 @@ export async function createPayPalOrder(
   items: PayPalOrderItem[],
   totalAmount: number,
   currency: string = "MXN",
-  orderId: string // ID interno de nuestra BD
+  orderId: string, // ID interno de nuestra BD
+  baseUrl: string  // URL base de la app (ej: https://alacranes.vercel.app)
 ): Promise<{ paypalOrderId: string; approveUrl: string }> {
   const accessToken = await getPayPalAccessToken()
 
@@ -103,8 +104,8 @@ export async function createPayPalOrder(
       },
     ],
     application_context: {
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/carrito?paypal=success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/carrito?paypal=cancel`,
+      return_url: `${baseUrl}/carrito?paypal=success`,
+      cancel_url: `${baseUrl}/carrito?paypal=cancel`,
       brand_name: "Alacranes de Durango",
       locale: "es-MX",
       landing_page: "LOGIN",
