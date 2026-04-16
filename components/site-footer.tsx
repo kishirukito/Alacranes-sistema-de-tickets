@@ -6,7 +6,7 @@ const quickLinks = [
   { label: "Inicio", href: "/" },
   { label: "Partidos", href: "/partidos" },
   { label: "Patrocinadores", href: "/#patrocinadores" },
-  { label: "Tienda", href: "/tienda" },
+  { label: "Tienda", href: "https://alacranes-store.vercel.app" },
 ]
 
 export function SiteFooter() {

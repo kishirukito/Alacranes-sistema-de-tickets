@@ -11,7 +11,7 @@ const allNavItems = [
   { label: "Inicio", href: "/" },
   { label: "Partidos", href: "/partidos" },
   { label: "Patrocinadores", href: "/#patrocinadores" },
-  { label: "Tienda", href: "/tienda" },
+  { label: "Tienda", href: "https://alacranes-store.vercel.app", external: true },
 ]
 
 export function SiteHeader() {
@@ -98,6 +98,7 @@ export function SiteHeader() {
             <a
               key={item.label}
               href={item.href}
+              {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               className={`group relative whitespace-nowrap px-4 py-2 text-sm font-medium transition-all duration-200 ${
                 isScrolled ? "text-forest/80 hover:text-forest" : "text-card/80 hover:text-card"
               }`}
@@ -218,6 +219,7 @@ export function SiteHeader() {
                   key={item.label}
                   href={item.href}
                   onClick={() => setOpen(false)}
+                  {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium text-card/80 transition-colors hover:bg-forest-light hover:text-card"
                 >
                   {item.label}
