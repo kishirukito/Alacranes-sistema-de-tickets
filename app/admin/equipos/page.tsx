@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import {
   Shield, Plus, Pencil, Trash2, X, Save, CheckCircle,
-  AlertCircle, RefreshCw, Search, Star, Home,
+  AlertCircle, RefreshCw, Star, Home,
 } from "lucide-react"
 import Image from "next/image"
 
@@ -113,7 +113,6 @@ export default function EquiposPage() {
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [search, setSearch] = useState("")
 
   // Modal state
   const [showForm, setShowForm] = useState(false)
@@ -234,12 +233,7 @@ export default function EquiposPage() {
   }
 
   // ── Filtered list ──────────────────────────────────────────────────────────
-  const filtered = teams.filter((t) =>
-    search.trim() === "" ||
-    t.name.toLowerCase().includes(search.toLowerCase()) ||
-    t.shortName.toLowerCase().includes(search.toLowerCase()) ||
-    t.city.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = teams
 
   const homeTeams = filtered.filter((t) => t.isHomeTeam)
   const visitingTeams = filtered.filter((t) => !t.isHomeTeam)
@@ -251,17 +245,6 @@ export default function EquiposPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        {/* Search */}
-        <div className="relative w-full max-w-xs">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Buscar equipo..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card py-2 pl-10 pr-4 text-sm focus:border-forest focus:outline-none focus:ring-2 focus:ring-forest/20"
-          />
-        </div>
 
         <div className="flex gap-3">
           <button
@@ -373,12 +356,6 @@ export default function EquiposPage() {
             </div>
           )}
 
-          {/* No search results */}
-          {filtered.length === 0 && search.trim() !== "" && (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              Sin resultados para «{search}»
-            </p>
-          )}
         </div>
       )}
 

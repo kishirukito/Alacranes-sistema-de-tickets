@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Search, Bell, User } from "lucide-react"
+import { Bell, User } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { supabase } from "@/lib/supabase"
 
@@ -96,15 +96,6 @@ export function AdminHeader() {
 
       {/* Right side */}
       <div className="flex items-center gap-4">
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="h-9 w-60 rounded-lg border border-border bg-secondary/50 pl-10 pr-4 text-sm text-card-foreground placeholder:text-muted-foreground focus:border-emerald focus:outline-none focus:ring-1 focus:ring-emerald"
-          />
-        </div>
 
         {/* Notifications */}
         <button className="relative flex size-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary">

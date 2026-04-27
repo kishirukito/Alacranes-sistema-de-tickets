@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Menu, User, Search, ShoppingBag, LogIn, Shield } from "lucide-react"
+import { Menu, User, ShoppingBag, LogIn, Shield } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { supabase } from "@/lib/supabase"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
@@ -113,14 +113,6 @@ export function SiteHeader() {
 
         {/* Right Icons */}
         <div className="hidden items-center gap-1 md:flex">
-          <button
-            className={`flex size-9 items-center justify-center rounded-full transition-colors ${
-              isScrolled ? "text-forest/80 hover:text-forest" : "text-card/80 hover:text-card"
-            }`}
-            aria-label="Buscar"
-          >
-            <Search className="size-4.5" />
-          </button>
 
           {/* Login / Perfil dinámico */}
           {!authLoading && (
@@ -263,9 +255,6 @@ export function SiteHeader() {
 
               <div className="my-2 border-t border-forest-light" />
               <div className="flex items-center gap-3 px-3">
-                <button className="text-card/80 hover:text-card" aria-label="Buscar">
-                  <Search className="size-4" />
-                </button>
                 <a href="/carrito" onClick={() => setOpen(false)} className="text-card/80 hover:text-card" aria-label="Carrito">
                   <ShoppingBag className="size-4" />
                 </a>

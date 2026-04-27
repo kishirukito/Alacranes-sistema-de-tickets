@@ -81,14 +81,14 @@ export function EventsList({
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex size-8 items-center justify-center gap-0.5 rounded bg-secondary">
-                      <span className="text-[10px] font-bold text-forest">
+                    <div className="flex h-8 items-center justify-center gap-1.5 rounded-lg bg-secondary px-3 border border-border/50">
+                      <span className="text-[11px] font-extrabold text-forest">
                         {event.homeCode}
                       </span>
-                      <span className="text-[10px] font-bold text-muted-foreground">
+                      <span className="text-[10px] font-bold text-muted-foreground/60">
                         vs
                       </span>
-                      <span className="text-[10px] font-bold text-forest">
+                      <span className="text-[11px] font-extrabold text-forest">
                         {event.awayCode}
                       </span>
                     </div>
